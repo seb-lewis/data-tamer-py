@@ -32,13 +32,7 @@ jobs:
           RAW_REF="$GITHUB_REF_NAME"
           TAG_NAME="${RAW_REF#test/v}"
           echo "Ref: $RAW_REF | Parsed tag: $TAG_NAME"
-          PY_VER=$(python - <<'PY'
-            import tomllib
-            with open('pyproject.toml','rb') as f:
-                data = tomllib.load(f)
-            print(data['project']['version'])
-          PY
-          )
+          PY_VER=$(python -c 'import tomllib; print(tomllib.load(open("pyproject.toml","rb"))["project"]["version"])')
           echo "pyproject version: $PY_VER"
           if [ "$TAG_NAME" != "$PY_VER" ]; then
             echo "Error: tag (test/v$TAG_NAME) does not match pyproject version ($PY_VER)"
