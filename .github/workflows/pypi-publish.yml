@@ -9,6 +9,8 @@ on:
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
+    # Extra safety: only run when ref is a version tag
+    if: startsWith(github.ref, 'refs/tags/v')
     permissions:
       contents: read
       id-token: write
@@ -31,11 +33,11 @@ jobs:
           TAG_NAME="${GITHUB_REF_NAME#v}"
           echo "Tag: $TAG_NAME"
           PY_VER=$(python - <<'PY'
-import tomllib, sys
-with open('pyproject.toml','rb') as f:
-    data = tomllib.load(f)
-print(data['project']['version'])
-PY
+            import tomllib, sys
+            with open('pyproject.toml','rb') as f:
+                data = tomllib.load(f)
+            print(data['project']['version'])
+          PY
           )
           echo "pyproject version: $PY_VER"
           if [ "$TAG_NAME" != "$PY_VER" ]; then

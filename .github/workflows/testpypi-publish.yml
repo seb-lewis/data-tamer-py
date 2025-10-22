@@ -33,11 +33,11 @@ jobs:
           TAG_NAME="${RAW_REF#test/v}"
           echo "Ref: $RAW_REF | Parsed tag: $TAG_NAME"
           PY_VER=$(python - <<'PY'
-import tomllib
-with open('pyproject.toml','rb') as f:
-    data = tomllib.load(f)
-print(data['project']['version'])
-PY
+            import tomllib
+            with open('pyproject.toml','rb') as f:
+                data = tomllib.load(f)
+            print(data['project']['version'])
+          PY
           )
           echo "pyproject version: $PY_VER"
           if [ "$TAG_NAME" != "$PY_VER" ]; then
@@ -52,4 +52,3 @@ PY
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://test.pypi.org/legacy/
-
