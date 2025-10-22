@@ -1,4 +1,4 @@
-# data-tamer-py
+# data-tamer
 
 Lightweight Python wrappers (built on LiteLLM) for transforming data with structured outputs, compact prompts for lower token usage, and batching utilities. Strict structured outputs are supported via Pydantic models or JSON Schema.
 
@@ -7,9 +7,9 @@ Lightweight Python wrappers (built on LiteLLM) for transforming data with struct
 Install from PyPI via pip or UV:
 
 ```
-pip install data-tamer-py
+pip install data-tamer
 # or with UV
-uv add data-tamer-py
+uv add data-tamer
 ```
 
 Basic usage in Python mirrors the TS API and prompt-compaction behavior:

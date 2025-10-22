@@ -1,5 +1,5 @@
 [project]
-name = "data-tamer-py"
+name = "data-tamer"
 version = "0.1.2"
 description = "Python port of data-tamer using LiteLLM for structured outputs and batching"
 readme = "README.md"

@@ -136,7 +136,7 @@ def transform_object(
 
     if debug:
         try:
-            print("[data-tamer-py] Prompt (single/object)\n", prompt)
+            print("[data-tamer] Prompt (single/object)\n", prompt)
         except Exception:
             pass
 
@@ -174,7 +174,7 @@ def transform_object(
                 raise
             # simple backoff; `repair` is advisory since ai-sdk-python may not expose repair hooks
             if debug:
-                print(f"[data-tamer-py] Error attempt {attempt}: {err}")
+                print(f"[data-tamer] Error attempt {attempt}: {err}")
             if not repair:
                 time.sleep(min(1.0 * attempt, 3.0))
                 continue
@@ -212,7 +212,7 @@ def stream_transform_object(
 
     if debug:
         try:
-            print("[data-tamer-py] Prompt (single/stream)\n", prompt)
+            print("[data-tamer] Prompt (single/stream)\n", prompt)
         except Exception:
             pass
 

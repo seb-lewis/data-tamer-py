@@ -114,7 +114,7 @@ def transform_batch(
             try:
                 if debug:
                     try:
-                        print("[data-tamer-py] Batch size", {"batch_index": batch_index, "count": len(batch_items)})
+                        print("[data-tamer] Batch size", {"batch_index": batch_index, "count": len(batch_items)})
                     except Exception:
                         pass
 
@@ -131,7 +131,7 @@ def transform_batch(
 
                 if debug:
                     try:
-                        print("[data-tamer-py] Prompt (batch)", {"batch_index": batch_index, "prompt": prompt})
+                        print("[data-tamer] Prompt (batch)", {"batch_index": batch_index, "prompt": prompt})
                     except Exception:
                         pass
 
@@ -166,7 +166,7 @@ def transform_batch(
                 if attempt > max_retries:
                     raise
                 if debug:
-                    print(f"[data-tamer-py] Batch error attempt {attempt} (batch {batch_index}): {err}")
+                    print(f"[data-tamer] Batch error attempt {attempt} (batch {batch_index}): {err}")
                 time.sleep(min(1.0 * attempt, 3.0))
 
     if concurrency and concurrency > 1:
@@ -234,7 +234,7 @@ async def async_transform_batch(
                 try:
                     if debug:
                         try:
-                            print("[data-tamer-py] Batch size", {"batch_index": batch_index, "count": len(batch_items)})
+                            print("[data-tamer] Batch size", {"batch_index": batch_index, "count": len(batch_items)})
                         except Exception:
                             pass
 
@@ -293,7 +293,7 @@ async def async_transform_batch(
                     if attempt > max_retries:
                         raise
                     if debug:
-                        print(f"[data-tamer-py] Batch error attempt {attempt} (batch {batch_index}): {err}")
+                        print(f"[data-tamer] Batch error attempt {attempt} (batch {batch_index}): {err}")
                     await asyncio.sleep(min(1.0 * attempt, 3.0))
 
     await asyncio.gather(*(worker(i, b) for i, b in enumerate(batches)))
