@@ -117,12 +117,12 @@ The prompt builder:
 
 ## Notes
 
-- Providers (LiteLLM): pass a model id string (e.g., `gpt-4o-mini`, `openrouter/google/gemini-2.5-flash-lite`) and set the corresponding API key in env (`OPENAI_API_KEY`, `OPENROUTER_API_KEY`, etc.).
+- Providers (LiteLLM): pass a model id string (e.g., `gpt-4o-mini`, `openrouter/google/gemini-2.5-flash-lite`) and set the corresponding API key in env (`OPENAI_API_KEY`, `OPENROUTER_API_KEY`, etc.). Alternatively, pass credentials directly via `provider_options`, e.g. `provider_options={"api_key": "sk-...", "api_base": "https://..."}`.
 - Structured outputs:
   - Pydantic: pass a `BaseModel` subclass as `schema`. LiteLLM will request structured responses when supported; we parse JSON regardless.
   - JSON Schema: pass a dict; we set LiteLLM `response_format={"type":"json_schema",...}` and also validate locally with `jsonschema`.
   - Helpers: `pydantic_json_schema`, `pydantic_array_json_schema` generate dict schemas from Pydantic models.
-- OpenRouter: set `OPENROUTER_API_KEY` and pick an OpenRouter model id via `LITELLM_MODEL`, e.g., `openrouter/google/gemini-2.5-flash-lite`.
+- OpenRouter: set `OPENROUTER_API_KEY` and pick an OpenRouter model id via `LITELLM_MODEL`, e.g., `openrouter/google/gemini-2.5-flash-lite`. Or pass `provider_options={"api_key": "..."}` with an OpenRouter model id.
 
 ## Examples
 

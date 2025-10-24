@@ -148,10 +148,26 @@ def transform_batch(
                 else:
                     rf = {"type": "json_object"}
                 msgs = _messages_for_prompt(prompt)
+                # Pass through provider_options (e.g., api_key, api_base, custom_llm_provider)
+                opts = dict(provider_options or {})
+                if isinstance(model, str) and model.startswith("openrouter/") and "custom_llm_provider" not in opts:
+                    # Ensure LiteLLM uses the OpenRouter provider when using an OpenRouter-routed model id
+                    opts["custom_llm_provider"] = "openrouter"
                 try:
-                    resp = completion(model=model, messages=msgs, temperature=0, response_format=rf)
+                    resp = completion(
+                        model=model,
+                        messages=msgs,
+                        temperature=0,
+                        response_format=rf,
+                        **opts,
+                    )
                 except Exception:
-                    resp = completion(model=model, messages=msgs, temperature=0)
+                    resp = completion(
+                        model=model,
+                        messages=msgs,
+                        temperature=0,
+                        **opts,
+                    )
 
                 text = _extract_text(resp)
                 obj = _parse_json_object(text)
@@ -264,13 +280,28 @@ async def async_transform_batch(
                     else:
                         rf = {"type": "json_object"}
                     try:
+                        opts = dict(provider_options or {})
+                        if isinstance(model, str) and model.startswith("openrouter/") and "custom_llm_provider" not in opts:
+                            opts["custom_llm_provider"] = "openrouter"
                         resp = await loop.run_in_executor(
                             None,
-                            lambda: completion(model=model, messages=_messages_for_prompt(prompt), temperature=0, response_format=rf),
+                            lambda: completion(
+                                model=model,
+                                messages=_messages_for_prompt(prompt),
+                                temperature=0,
+                                response_format=rf,
+                                **opts,
+                            ),
                         )
                     except Exception:
                         resp = await loop.run_in_executor(
-                            None, lambda: completion(model=model, messages=_messages_for_prompt(prompt), temperature=0)
+                            None,
+                            lambda: completion(
+                                model=model,
+                                messages=_messages_for_prompt(prompt),
+                                temperature=0,
+                                **opts,
+                            ),
                         )
 
                     text = _extract_text(resp)

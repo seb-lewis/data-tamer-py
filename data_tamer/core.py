@@ -154,11 +154,26 @@ def transform_object(
                     litellm.enable_json_schema_validation = True  # type: ignore[attr-defined]
                 except Exception:
                     pass
+            # Ensure provider routing for OpenRouter model ids
+            opts = dict(provider_options or {})
+            if isinstance(model, str) and model.startswith("openrouter/") and "custom_llm_provider" not in opts:
+                opts["custom_llm_provider"] = "openrouter"
             try:
-                resp = completion(model=model, messages=msgs, temperature=0, response_format=rf)
+                resp = completion(
+                    model=model,
+                    messages=msgs,
+                    temperature=0,
+                    response_format=rf,
+                    **opts,
+                )
             except Exception:
                 # Fallback: try without response_format
-                resp = completion(model=model, messages=msgs, temperature=0)
+                resp = completion(
+                    model=model,
+                    messages=msgs,
+                    temperature=0,
+                    **opts,
+                )
 
             text = _extract_text(resp)
             value = _parse_json_object(text)
@@ -220,11 +235,15 @@ def stream_transform_object(
     import asyncio
 
     class LiteLLMStream:
-        def __init__(self, model: Any, messages: List[Dict[str, str]], comp_func):
+        def __init__(self, model: Any, messages: List[Dict[str, str]], comp_func, provider_options: Optional[dict]):
             self._model = model
             self._messages = messages
             self._buffer: List[str] = []
             self._comp = comp_func
+            opts = dict(provider_options or {})
+            if isinstance(model, str) and model.startswith("openrouter/") and "custom_llm_provider" not in opts:
+                opts["custom_llm_provider"] = "openrouter"
+            self._provider_options = opts
 
         async def object(self) -> Any:
             text = "".join(self._buffer)
@@ -239,7 +258,13 @@ def stream_transform_object(
 
                     def _iter():
                         try:
-                            for chunk in self._comp(model=self._model, messages=self._messages, stream=True, temperature=0):
+                            for chunk in self._comp(
+                                model=self._model,
+                                messages=self._messages,
+                                stream=True,
+                                temperature=0,
+                                **(self._provider_options),
+                            ):
                                 yield chunk
                         except Exception as e:  # pragma: no cover
                             raise e
@@ -287,4 +312,4 @@ def stream_transform_object(
             return gen()
 
     msgs = _messages_for_prompt(prompt)
-    return LiteLLMStream(model, msgs, completion)
+    return LiteLLMStream(model, msgs, completion, provider_options)

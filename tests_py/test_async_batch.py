@@ -38,3 +38,22 @@ def test_async_transform_batch_uses_concurrency(monkeypatch):
     # Should flatten to 7 dicts
     assert len(results) == 7
     assert all(isinstance(r, dict) and r.get("ok") is True for r in results)
+
+
+@pytest.mark.asyncio
+async def test_async_transform_batch_is_awaitable(monkeypatch):
+    # Ensure we can await the coroutine directly under pytest asyncio
+    monkeypatch.setattr(batch_mod, "completion", _fake_completion)
+
+    items = [f"item {i}" for i in range(5)]
+    results = await batch_mod.async_transform_batch(
+        model="mock-model",
+        schema=None,
+        items=items,
+        batch_size=2,
+        concurrency=3,
+        prompt_context={"instructions": "Return {\"ok\": true} per input"},
+    )
+
+    assert len(results) == 5
+    assert all(isinstance(r, dict) and r.get("ok") is True for r in results)
